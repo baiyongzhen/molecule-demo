@@ -1,0 +1,36 @@
+---
+
+- name: Print the distribution and version
+  debug: msg="{{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution_release }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: Install tools on Amazon Linux
+  when: ansible_facts['os_family'] == 'RedHat'
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items: "{{ install_packages }}"
+  
+- name: Install tools on Ubuntu
+  when: ansible_os_family == 'Debian'
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items: "{{ install_packages }}"
+  
+- name: copy index.html
+  copy:
+    src: "index.html"
+    dest: /usr/share/nginx/html/
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
+    mode: 0750
+  notify: "restart nginx"

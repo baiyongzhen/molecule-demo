@@ -1,0 +1,7 @@
+---
+
+nginx_user: root
+install_packages:
+  - htop
+  - net-tools
+  - nginx

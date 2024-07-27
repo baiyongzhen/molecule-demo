@@ -1,0 +1,8 @@
+---
+
+nginx_user: www-data
+install_packages:
+  - htop
+  - net-tools
+  - curl
+  - nginx

@@ -1,0 +1,28 @@
+# bitbucket-pipeline.yaml
+
+definitions:
+  services:
+    docker: # can only be used with a self-hosted runner
+      image: docker:20.10.7-dind # docker:dind
+      memory: 2048
+
+  steps:
+    - step: &molecule-test
+        image: atlassian/default-image:4
+        runs-on:
+          - 'self.hosted'
+          - 'linux'
+        name: Molecule Test
+        script:
+          - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+          - pip install --no-cache-dir ansible molecule docker pytest testinfra
+          - python3.10 -m pip install -U "molecule-plugins[docker]"
+          - cd docker-testinfra-role
+          - molecule converge
+        services:
+          - docker
+
+pipelines:
+  custom: # Pipelines that can only be triggered manually
+    molecule:
+      - step: *molecule-test
