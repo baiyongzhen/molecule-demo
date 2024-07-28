@@ -19,3 +19,6 @@ platforms:
     cgroup: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+verifier:
+  #name: ansible
+  name: testinfra
